@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/demo-jna/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-jna/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-jni/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-jni/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-jnr/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-jnr/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-panama/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/demo-panama/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libffidemo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libffidemo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

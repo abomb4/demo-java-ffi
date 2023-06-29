@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.example</groupId>
+        <artifactId>java-ffi-article</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>libffidemo</artifactId>
+    <description>将一个库打包到 jar 中方便在 IDE 中直接使用</description>
+
+    <properties>
+        <maven.compiler.source>20</maven.compiler.source>
+        <maven.compiler.target>20</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>compile-c-ostype</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <condition property="isWindows">
+                                    <os family="windows"/>
+                                </condition>
+                                <condition property="isUnix">
+                                    <os family="unix"/>
+                                </condition>
+                            </target>
+                            <exportAntProperties>true</exportAntProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-c-linux</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.outputDirectory}"/>
+                                <exec executable="gcc">
+                                    <arg value="-shared"/>
+                                    <arg value="-fPIC"/>
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.outputDirectory}/libffidemo.so"/>
+                                    <arg value="${project.basedir}/src/main/c/libffidemo.c"/>
+                                </exec>
+                            </target>
+                            <exportAntProperties>true</exportAntProperties>
+                            <skip>${isWindows}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-c-windows</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.outputDirectory}"/>
+                                <exec executable="gcc">
+                                    <arg value="-shared"/>
+                                    <arg value="-fPIC"/>
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.outputDirectory}/libffidemo.dll"/>
+                                    <arg value="${project.basedir}/src/main/c/libffidemo.c"/>
+                                </exec>
+                            </target>
+                            <exportAntProperties>true</exportAntProperties>
+                            <skip>${isUnix}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

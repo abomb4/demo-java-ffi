@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.example</groupId>
+        <artifactId>java-ffi-article</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>demo-jni</artifactId>
+
+    <properties>
+        <maven.compiler.source>20</maven.compiler.source>
+        <maven.compiler.target>20</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>libffidemo</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-h</arg>
+                        <arg>${project.basedir}/src/main/c</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>compile-c-ostype</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <condition property="isWindows">
+                                    <os family="windows"/>
+                                </condition>
+                                <condition property="isUnix">
+                                    <os family="unix"/>
+                                </condition>
+                            </target>
+                            <exportAntProperties>true</exportAntProperties>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-c-linux</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.outputDirectory}"/>
+                                <exec executable="gcc">
+                                    <arg value="-shared"/>
+                                    <arg value="-fPIC"/>
+                                    <arg value="-I${env.JAVA_HOME}/include/"/>
+                                    <arg value="-I${env.JAVA_HOME}/include/linux"/>
+                                    <arg value="-I${project.basedir}/../libffidemo/src/main/c"/>
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.outputDirectory}/libJniDemo.so"/>
+                                    <arg value="-L${project.basedir}/../libffidemo/target/classes"/>
+                                    <arg value="-lffidemo"/>
+                                    <arg value="${project.basedir}/src/main/c/JniDemo.c"/>
+                                </exec>
+                            </target>
+                            <exportAntProperties>true</exportAntProperties>
+                            <skip>${isWindows}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-c-windows</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.build.outputDirectory}"/>
+                                <exec executable="gcc">
+                                    <arg value="-shared"/>
+                                    <arg value="-fPIC"/>
+                                    <arg value="-I${env.JAVA_HOME}/include/"/>
+                                    <arg value="-I${env.JAVA_HOME}/include/windows"/>
+                                    <arg value="-I{project.basedir}/../libffidemo/src/main/c"/>
+                                    <arg value="-o"/>
+                                    <arg value="${project.build.outputDirectory}/JniDemo.dll"/>
+                                    <arg value="-L${project.basedir}/../libffidemo/target/classes"/>
+                                    <arg value="-lffidemo"/>
+                                    <arg value="${project.basedir}/src/main/c/JniDemo.c"/>
+                                </exec>
+                            </target>
+                            <exportAntProperties>true</exportAntProperties>
+                            <skip>${isUnix}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
